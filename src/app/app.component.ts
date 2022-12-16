@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalService } from './services/modal.service';
 
 @Component({
   selector: 'app-root',
@@ -7,8 +6,5 @@ import { ModalService } from './services/modal.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  constructor(public modal: ModalService) {}
-  ngOnInit() {
-    this.modal.register('auth');
-  }
+  ngOnInit() {}
 }
