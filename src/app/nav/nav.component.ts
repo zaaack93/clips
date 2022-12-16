@@ -10,6 +10,6 @@ export class NavComponent {
   constructor(public modal: ModalService) {}
   openModal(event: Event) {
     event.preventDefault();
-    this.modal.toggleModalVisible();
+    this.modal.toggleModalVisible('auth');
   }
 }

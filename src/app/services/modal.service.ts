@@ -1,16 +1,31 @@
 import { Injectable } from '@angular/core';
 
+interface IModel {
+  id: string;
+  visible: Boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ModalService {
-  private visible: Boolean = false;
+  private modals: IModel[] = [];
   constructor() {}
 
-  toggleModalVisible() {
-    this.visible = !this.visible;
+  toggleModalVisible(id: string) {
+    const modal = this.modals.find((modal) => modal.id == id);
+    if (modal) {
+      modal.visible = !modal.visible;
+    }
   }
-  isModalVisible() {
-    return this.visible;
+  isModalVisible(id: string): Boolean {
+    //check if we have an modal after that get the visible attribute
+    return Boolean(this.modals.find((modal) => modal.id == id)?.visible);
+  }
+  register(id: string) {
+    this.modals.push({
+      id,
+      visible: false,
+    });
   }
 }
