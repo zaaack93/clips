@@ -33,5 +33,7 @@ export class ContainerTabsComponent implements AfterContentInit {
       tab.active = false;
     });
     tab.active = true;
+    //set the prevent default behaviour to false
+    return false;
   }
 }
