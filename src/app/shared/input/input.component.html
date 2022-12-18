@@ -17,4 +17,7 @@
   <div *ngIf="control.errors?.['max']">
     Value to high
   </div>
+  <div *ngIf="control.errors?.['pattern']">
+    Password must be at least 8 characters long,have 1 uppercase letter, 1 lowercase letter, and 1 number.
+  </div>
 </div>
