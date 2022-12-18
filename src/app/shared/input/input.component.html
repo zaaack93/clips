@@ -1,10 +1,13 @@
-<input type="text" [formControl]="control" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
+<input [type]="type" [formControl]="control" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
                   duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
-  [class.border-red-500]="control.invalid && (control.dirty || control.touched)" placeholder="Enter Name"
-  formControlName="name" minlength="3" />
+  [class.border-red-500]="control.invalid && (control.dirty || control.touched)" [placeholder]="placeholder"
+  formControlName="name"/>
 <div *ngIf="control.invalid && (control.dirty || control.touched)" class="text-red-500">
   <div *ngIf="control.errors?.['required']">
     Field is required.
+  </div>
+  <div *ngIf="control.errors?.['email']">
+    You must enter a valid email
   </div>
   <div *ngIf="control.errors?.['minlength']">
     Field must be at least {{control.errors?.['minlength'].requiredLength}} characters long.
