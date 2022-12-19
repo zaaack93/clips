@@ -4,6 +4,7 @@
   <div class="mb-3">
     <label class="inline-block mb-2">Email</label>
     <input
+      #email="ngModel"
       name="email"
       [(ngModel)]="credantials.email"
       type="email"
@@ -12,6 +13,14 @@
       required
       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
     />
+    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-red-400">
+      <div *ngIf="email.errors?.['required']">
+        Email is required.
+      </div>
+      <div *ngIf="email.errors?.['pattern']">
+        You must enter a valid email
+      </div>
+    </div>
   </div>
   <!-- Password -->
   <div class="mb-3">
@@ -29,4 +38,3 @@
     Submit
   </button>
 </form>
-{{loginForm.valid}}
