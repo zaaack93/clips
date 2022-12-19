@@ -8,10 +8,12 @@
       name="email"
       [(ngModel)]="credantials.email"
       type="email"
-      class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
       placeholder="Enter Email"
       required
       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+      class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
+                  duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
+      [class.border-red-500]="email.invalid && (email.dirty || email.touched)"
     />
     <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-red-400">
       <div *ngIf="email.errors?.['required']">
@@ -26,10 +28,21 @@
   <div class="mb-3">
     <label class="inline-block mb-2">Password</label>
     <input
+      #password="ngModel"
+      name="password"
+      [(ngModel)]="credantials.password"
       type="password"
-      class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
+      class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
+                  duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
+      [class.border-red-500]="password.invalid && (password.dirty || password.touched)"
       placeholder="Password"
+      required
     />
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="text-red-400">
+      <div *ngIf="password.errors?.['required']">
+        Password is required.
+      </div>
+    </div>
   </div>
   <button
     type="submit"
