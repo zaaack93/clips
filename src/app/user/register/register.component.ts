@@ -34,5 +34,13 @@ export class RegisterComponent {
     confirm_password: this.confirm_password,
     phoneNumber: this.phoneNumber,
   });
-  register() {}
+  colorAlert:string="";
+  showAlert:boolean=false;
+  messageAlert:string="Please wait! You're account is being created."
+
+  register() {
+    this.colorAlert="green";
+    this.showAlert=true;
+    this.messageAlert="Please wait! You're account is being created."
+  }
 }
