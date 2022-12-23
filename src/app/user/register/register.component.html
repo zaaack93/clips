@@ -33,7 +33,7 @@
     <label class="inline-block mb-2">Phone Number</label>
     <app-input [control]="phoneNumber" placeholder="Enter Phone Number" format="0000000000"></app-input>
   </div>
-  <button type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition" [disabled]="RegisterForm.invalid" [ngClass]="{'hover:bg-indigo-500':RegisterForm.valid , 'opacity-50 cursor-not-allowed':RegisterForm.invalid}">
+  <button type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition" [disabled]="RegisterForm.invalid || inSubmission" [ngClass]="{'hover:bg-indigo-500':RegisterForm.valid && !inSubmission , 'opacity-50 cursor-not-allowed':RegisterForm.invalid || inSubmission}">
     Submit
   </button>
 </form>

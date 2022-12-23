@@ -40,17 +40,19 @@ export class RegisterComponent {
   colorAlert:string="";
   showAlert:boolean=false;
   messageAlert:string="Please wait! You're account is being created."
+  inSubmission:boolean=false;
 
   register() {
     const {email,password}=this.RegisterForm.value;
     const _vm=this;
+    this.inSubmission=true;
     this.auth.createUserWithEmailAndPassword(email as string, password as string)
     .then((userCred)=>{
       _vm.colorAlert="green";
       _vm.showAlert=true;
-      _vm.messageAlert="Please wait! You're account is being created."
+      _vm.messageAlert="The user is create with success"
     })
-    .catch(function(error) {
+    .catch((error)=> {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -61,7 +63,8 @@ export class RegisterComponent {
       } else {
         _vm.messageAlert=errorMessage;
       }
-      console.log(error);
+    }).finally(()=>{
+      _vm.inSubmission=false;
     });
   }
 }
