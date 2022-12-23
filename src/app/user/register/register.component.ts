@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -9,7 +8,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
-  constructor(private auth: AngularFireAuth, private db: AngularFirestore) {}
+  constructor(private auth: AuthService) {}
   name = new FormControl('', [Validators.required, Validators.minLength(3)]);
   email = new FormControl('', [Validators.required, Validators.email]);
   age = new FormControl('', [
@@ -42,37 +41,22 @@ export class RegisterComponent {
   messageAlert: string = "Please wait! You're account is being created.";
   inSubmission: boolean = false;
 
-  register() {
-    const { email, password } = this.RegisterForm.value;
-    const _vm = this;
+  async register() {
+    this.showAlert = false;
     this.inSubmission = true;
-    this.auth
-      .createUserWithEmailAndPassword(email as string, password as string)
-      .then(async (userCred) => {
-        await _vm.db.collection('users').add({
-          name: _vm.name.value,
-          email: _vm.email.value,
-          age: _vm.age.value,
-          phoneNumber: _vm.phoneNumber.value,
-        });
-        _vm.colorAlert = 'green';
-        _vm.showAlert = true;
-        _vm.messageAlert = 'The user is create with success';
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        _vm.colorAlert = 'red';
-        _vm.showAlert = true;
-        if (errorCode == 'auth/weak-password') {
-          _vm.messageAlert = 'The password is too weak.';
-        } else {
-          _vm.messageAlert = errorMessage;
-        }
-      })
-      .finally(() => {
-        _vm.inSubmission = false;
-      });
+    try {
+      await this.auth.createUser(this.RegisterForm.value);
+      this.showAlert = true;
+      this.colorAlert = 'green';
+      this.messageAlert = 'user successfully registered';
+      this.inSubmission = false;
+    } catch (e) {
+      console.log(e);
+      this.showAlert = true;
+      this.colorAlert = 'red';
+      this.messageAlert =
+        'an unexpected error has occurred please try again later ';
+      this.inSubmission = false;
+    }
   }
 }
