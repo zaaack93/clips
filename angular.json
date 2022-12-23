@@ -30,6 +30,14 @@
             "scripts": []
           },
           "configurations": {
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.stage.ts"
+                }
+              ]
+            },
             "production": {
               "budgets": [
                 {
@@ -64,6 +72,9 @@
             },
             "development": {
               "browserTarget": "clips:build:development"
+            },
+            "staging": {
+              "browserTarget": "angular-environment-example:build:staging"
             }
           },
           "defaultConfiguration": "development"
