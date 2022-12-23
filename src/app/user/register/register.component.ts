@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import IUser from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -11,7 +12,7 @@ export class RegisterComponent {
   constructor(private auth: AuthService) {}
   name = new FormControl('', [Validators.required, Validators.minLength(3)]);
   email = new FormControl('', [Validators.required, Validators.email]);
-  age = new FormControl('', [
+  age = new FormControl<Number | null>(null, [
     Validators.required,
     Validators.min(18),
     Validators.max(120),
@@ -45,7 +46,7 @@ export class RegisterComponent {
     this.showAlert = false;
     this.inSubmission = true;
     try {
-      await this.auth.createUser(this.RegisterForm.value);
+      await this.auth.createUser(this.RegisterForm.value as IUser);
       this.showAlert = true;
       this.colorAlert = 'green';
       this.messageAlert = 'user successfully registered';
