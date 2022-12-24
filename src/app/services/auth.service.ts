@@ -17,7 +17,7 @@ export class AuthService {
 
   constructor(private auth: AngularFireAuth, private db: AngularFirestore) {
     this.userCollection = db.collection('users');
-    this.isAuthenticated$ = auth.user.pipe(map((user) => !user));
+    this.isAuthenticated$ = auth.user.pipe(map((user) => !!user));
   }
   async createUser(userData: IUser) {
     if (!userData.password) throw new Error('Password is not provided');
