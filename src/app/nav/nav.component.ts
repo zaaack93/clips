@@ -8,12 +8,7 @@ import { ModalService } from '../services/modal.service';
   styleUrls: ['./nav.component.css'],
 })
 export class NavComponent {
-  isAuthenticated: boolean = false;
-  constructor(public modal: ModalService, public auth: AuthService) {
-    auth.isAuthenticated$.subscribe((status) => {
-      this.isAuthenticated = status;
-    });
-  }
+  constructor(public modal: ModalService, public auth: AuthService) {}
   openModal(event: Event) {
     event.preventDefault();
     this.modal.toggleModalVisible('auth');
