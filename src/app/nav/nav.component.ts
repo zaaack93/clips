@@ -12,17 +12,10 @@ import { Router } from '@angular/router';
 export class NavComponent {
   constructor(
     public modal: ModalService,
-    public auth: AuthService,
-    private afauth: AngularFireAuth,
-    private router:Router
+    public auth: AuthService
   ) {}
   openModal(event: Event) {
     event.preventDefault();
     this.modal.toggleModalVisible('auth');
-  }
-  async logout(event: Event) {
-    event.preventDefault();
-    await this.afauth.signOut();
-    await this.router.navigateByUrl('/')
   }
 }
