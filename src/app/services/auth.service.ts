@@ -1,4 +1,4 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import {
@@ -6,7 +6,7 @@ import {
   AngularFirestoreCollection,
 } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
-import { map, delay } from 'rxjs/operators';
+import { map, delay, filter } from 'rxjs/operators';
 import IUser from '../models/user.model';
 
 @Injectable({
@@ -25,6 +25,7 @@ export class AuthService {
       map((user) => !!user),
       delay(1000)
     );
+    this.router.events.pipe(filter(e=>e instanceof NavigationEnd)).subscribe(console.log)
   }
   async createUser(userData: IUser) {
     if (!userData.password) throw new Error('Password is not provided');
@@ -46,8 +47,10 @@ export class AuthService {
   }
   async logout(event?: Event) {
     if(event)
-    event.preventDefault();
-    await this.afauth.signOut();
+      event.preventDefault();
+
+
+    // await this.afauth.signOut();
     await this.router.navigateByUrl('/')
   }
 }
