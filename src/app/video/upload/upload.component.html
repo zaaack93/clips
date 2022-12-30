@@ -11,7 +11,7 @@
       (dragend)="isDragOver=false"
       (dragleave)="isDragOver=false"
       (mouseleave)="isDragOver=false"
-      (drop)=""
+      (drop)="storeFile($event)"
       [ngClass]="{'text-white bg-indigo-400 border-indigo-400 border-solid' : isDragOver}"
       class="w-full
       px-10 py-40 rounded text-center cursor-pointer border border-dashed
