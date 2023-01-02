@@ -2,17 +2,20 @@ import { ClipService } from './../../services/clip.service';
 import { switchMap } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Component } from '@angular/core';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Component, OnDestroy } from '@angular/core';
+import {
+  AngularFireStorage,
+  AngularFireUploadTask,
+} from '@angular/fire/compat/storage';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { last, Observable } from 'rxjs';
-import { stringify, v4 as uuidv4 } from 'uuid';
+import { last } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css'],
 })
-export class UploadComponent {
+export class UploadComponent implements OnDestroy {
   isDragOver!: boolean;
   file!: File | null;
   nextStep: boolean = false;
@@ -26,6 +29,7 @@ export class UploadComponent {
   showAlert: boolean = false;
   messageAlert: string = 'Please wait! Your clip is being uploaded.';
   user: firebase.User | null = null;
+  task!: AngularFireUploadTask;
   constructor(
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
@@ -52,14 +56,14 @@ export class UploadComponent {
     this.showAlert = false;
     this.inSubmission = true;
     const filePath = `clips/${uuidv4()}.mp4`;
-    const task = this.storage.upload(filePath, this.file);
+    this.task = this.storage.upload(filePath, this.file);
     //ref is an object that points to a specific file
     const clipRef = this.storage.ref(filePath);
-    task.percentageChanges().subscribe((progress) => {
+    this.task.percentageChanges().subscribe((progress) => {
       this.percentage = progress as number;
     });
 
-    task
+    this.task
       .snapshotChanges()
       .pipe(
         last(),
@@ -89,5 +93,8 @@ export class UploadComponent {
           _vm.inSubmission = false;
         },
       });
+  }
+  ngOnDestroy(): void {
+    this.task?.cancel();
   }
 }
