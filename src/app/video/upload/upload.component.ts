@@ -3,6 +3,7 @@ import { switchMap } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   AngularFireStorage,
   AngularFireUploadTask,
@@ -33,7 +34,8 @@ export class UploadComponent implements OnDestroy {
   constructor(
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
-    private clipService: ClipService
+    private clipService: ClipService,
+    private router: Router
   ) {
     auth.user.subscribe((user) => {
       this.user = user;
@@ -44,7 +46,6 @@ export class UploadComponent implements OnDestroy {
     this.file = ($event as DragEvent).dataTransfer
       ? ($event as DragEvent).dataTransfer?.files.item(0) ?? null
       : ($event.target as HTMLInputElement).files?.item(0) ?? null;
-    console.log(this.file);
     if (!this.file || this.file.type !== 'video/mp4') {
       return;
     }
@@ -70,7 +71,7 @@ export class UploadComponent implements OnDestroy {
         switchMap(() => clipRef.getDownloadURL())
       )
       .subscribe({
-        next(url) {
+        async next(url) {
           const clip = {
             uid: _vm.user?.uid as string,
             displayName: _vm.user?.displayName as string,
@@ -78,12 +79,14 @@ export class UploadComponent implements OnDestroy {
             fileName: `${filePath.replace('clips/', '')}`,
             url: url,
           };
-          _vm.clipService.createClip(clip);
-          console.log(url);
+          const clipDocRef = await _vm.clipService.createClip(clip);
           _vm.showAlert = true;
           _vm.colorAlert = 'green';
           _vm.messageAlert = 'Your clip is now ready to share';
           _vm.inSubmission = false;
+          setTimeout(() => {
+            _vm.router.navigate(['clip', clipDocRef.id]);
+          }, 1000);
         },
         error(error) {
           _vm.showAlert = true;
