@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { last } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 @Component({
   selector: 'app-upload',
@@ -17,6 +18,7 @@ export class UploadComponent {
     {
       name: this.title,
   })
+  percentage:number=0;
   colorAlert: string = '';
   showAlert: boolean = false;
   messageAlert: string = "Please wait! Your clip is being uploaded.";
@@ -32,22 +34,28 @@ export class UploadComponent {
   }
 
   async uploadFile(){
+    let _vm=this;
     this.showAlert = false;
     this.inSubmission = true;
-    try {
-      const filePath=`clips/${uuidv4()}.mp4`
-      await this.storage.upload(filePath,this.file)
-      this.showAlert = true;
-      this.colorAlert = 'green';
-      this.messageAlert = 'File successfully uploaded';
-      this.inSubmission = false;
-    } catch (e) {
-      console.log(e);
-      this.showAlert = true;
-      this.colorAlert = 'red';
-      this.messageAlert =
-        'an unexpected error has occurred please try again later ';
-      this.inSubmission = false;
-    }
+    const filePath=`clips/${uuidv4()}.mp4`
+    const task = this.storage.upload(filePath,this.file)
+    task.percentageChanges().subscribe(progress=>{
+      this.percentage=progress as number;
+    })
+
+    task.snapshotChanges().pipe(last()).subscribe({
+      next(snapchot){
+        _vm.showAlert = true;
+        _vm.colorAlert = 'green';
+        _vm.messageAlert = 'Your clip is now ready to share';
+        _vm.inSubmission = false;
+      },
+      error(error){
+        _vm.showAlert = true;
+        _vm.colorAlert = 'red';
+        _vm.messageAlert = 'an unexpected error has occurred please try again later ';
+        _vm.inSubmission = false;
+      }
+    })
   }
 }

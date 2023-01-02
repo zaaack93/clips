@@ -3,7 +3,9 @@
   <app-alert [color]="colorAlert" *ngIf="showAlert">
     {{messageAlert}}
   </app-alert>
-
+  <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700" *ngIf="inSubmission">
+    <div class="bg-green-600 h-2.5 rounded-full" [ngStyle]="{'width': percentage+'%'}"></div>
+  </div>
   <div class="rounded relative flex flex-col">
     <div class="font-bold mb-6">Upload Video</div>
 
