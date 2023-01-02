@@ -17,6 +17,9 @@ export class UploadComponent {
     {
       name: this.title,
   })
+  colorAlert: string = '';
+  showAlert: boolean = false;
+  messageAlert: string = "Please wait! Your clip is being uploaded.";
   constructor(private storage:AngularFireStorage){}
   storeFile($event:Event){
     this.isDragOver=false;
@@ -28,9 +31,23 @@ export class UploadComponent {
     this.nextStep=true;
   }
 
-  uploadFile(){
-    console.log("file upload")
-    const filePath=`clips/${uuidv4()}.mp4`
-    this.storage.upload(filePath,this.file)
+  async uploadFile(){
+    this.showAlert = false;
+    this.inSubmission = true;
+    try {
+      const filePath=`clips/${uuidv4()}.mp4`
+      await this.storage.upload(filePath,this.file)
+      this.showAlert = true;
+      this.colorAlert = 'green';
+      this.messageAlert = 'File successfully uploaded';
+      this.inSubmission = false;
+    } catch (e) {
+      console.log(e);
+      this.showAlert = true;
+      this.colorAlert = 'red';
+      this.messageAlert =
+        'an unexpected error has occurred please try again later ';
+      this.inSubmission = false;
+    }
   }
 }
