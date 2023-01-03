@@ -17,16 +17,18 @@ export class ManageComponent implements OnInit {
     this.route.queryParams.subscribe((params: Params) => {
       this.videoOrder = params['sort'] === '2' ? params['sort'] : '1';
     });
-
+    this.initListClips();
+  }
+  initListClips() {
     this.clipService.getUserClips().subscribe((docs) => {
       this.listClips = [];
 
       docs.forEach((doc) => {
-        console.log(doc);
         this.listClips.push({ docID: doc.id, ...doc.data() });
       });
     });
   }
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -43,6 +45,10 @@ export class ManageComponent implements OnInit {
   }
   editClip(clip: IClip) {
     this.activeClip = clip;
+    this.modal.toggleModalVisible('editClipModal');
+  }
+  upldateListClip() {
+    this.initListClips();
     this.modal.toggleModalVisible('editClipModal');
   }
 }
