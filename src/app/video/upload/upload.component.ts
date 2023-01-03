@@ -76,7 +76,7 @@ export class UploadComponent implements OnDestroy {
             uid: _vm.user?.uid as string,
             displayName: _vm.user?.displayName as string,
             title: _vm.title.value as string,
-            fileName: `${filePath.replace('clips/', '')}`,
+            fileName: `${filePath.replace('clip/', '')}`,
             url: url,
           };
           const clipDocRef = await _vm.clipService.createClip(clip);
