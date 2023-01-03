@@ -1,7 +1,9 @@
 <app-modal modalID="editClipModal">
     <!-- Edit Modal -->
     <p class="text-2xl font-bold">Edit Video</p>
-
+    <app-alert [color]="colorAlert" *ngIf="showAlert">
+      {{messageAlert}}
+    </app-alert>
     <!-- Form -->
     <form [formGroup]="editForm" (ngSubmit)="editClip()" >
       <!-- Title -->
@@ -11,9 +13,9 @@
       </div>
 
       <div class="mt-4 text-right">
-        <button type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition" [disabled]="editForm.invalid || editForm" [ngClass]="{'hover:bg-indigo-500':editForm.valid && !inSubmission , 'opacity-50 cursor-not-allowed':editForm.invalid || inSubmission}">
+        <button type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition" [disabled]="editForm.invalid || inSubmission" [ngClass]="{'hover:bg-indigo-500': editForm.valid && !inSubmission , 'opacity-50 cursor-not-allowed': editForm.invalid || inSubmission}">
             Update
-          </button>
+        </button>
       </div>
     </form>
 </app-modal>

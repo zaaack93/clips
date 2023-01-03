@@ -21,6 +21,9 @@ export class ClipService {
   createClip(clip: IClip): Promise<DocumentReference<IClip>> {
     return this.clipCollection.add(clip);
   }
+  updateClip(title: string, id: string) {
+    return this.clipCollection.doc(id).update({ title });
+  }
   getUserClips() {
     //switch map should be also send a observable
     return this.auth.user.pipe(
