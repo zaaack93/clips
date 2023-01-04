@@ -8,17 +8,19 @@ import {
   QuerySnapshot,
 } from '@angular/fire/compat/firestore';
 import IClip from '../models/clip.model';
-import { tap, of } from 'rxjs';
-import {
-  AngularFireStorage,
-} from '@angular/fire/compat/storage';
+import { tap, of, BehaviorSubject, combineLatest } from 'rxjs';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClipService {
   clipCollection: AngularFirestoreCollection<IClip>;
-  constructor(private db: AngularFirestore, private auth: AngularFireAuth,private storage:AngularFireStorage) {
+  constructor(
+    private db: AngularFirestore,
+    private auth: AngularFireAuth,
+    private storage: AngularFireStorage
+  ) {
     this.clipCollection = this.db.collection('clips');
   }
   createClip(clip: IClip): Promise<DocumentReference<IClip>> {
@@ -27,18 +29,21 @@ export class ClipService {
   updateClip(title: string, id: string) {
     return this.clipCollection.doc(id).update({ title });
   }
-  async deletClip(clip: IClip){
-   await this.storage.storage.refFromURL(clip.url).delete()
-   await this.clipCollection.doc(clip.docID).delete()
+  async deletClip(clip: IClip) {
+    await this.storage.storage.refFromURL(clip.url).delete();
+    await this.clipCollection.doc(clip.docID).delete();
   }
-  getUserClips() {
+  getUserClips(sort$: BehaviorSubject<string>) {
     //switch map should be also send a observable
-    return this.auth.user.pipe(
-      switchMap((user) => {
+    return combineLatest([this.auth.user, sort$]).pipe(
+      switchMap((values) => {
+        const [user, sort] = values;
         if (!user) {
           return of([]);
         }
-        const query = this.clipCollection.ref.where('uid', '==', user.uid);
+        const query = this.clipCollection.ref
+          .where('uid', '==', user.uid)
+          .orderBy('timeStamp', sort === '1' ? 'desc' : 'asc');
         return query.get();
       }),
       map((snapshot) => {
