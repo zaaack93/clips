@@ -51,4 +51,8 @@ export class ManageComponent implements OnInit {
     this.initListClips();
     this.modal.toggleModalVisible('editClipModal');
   }
+  async deleteClip(clip :IClip){
+    await this.clipService.deletClip(clip);
+    this.initListClips();
+  }
 }

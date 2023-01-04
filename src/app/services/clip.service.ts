@@ -9,13 +9,16 @@ import {
 } from '@angular/fire/compat/firestore';
 import IClip from '../models/clip.model';
 import { tap, of } from 'rxjs';
+import {
+  AngularFireStorage,
+} from '@angular/fire/compat/storage';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClipService {
   clipCollection: AngularFirestoreCollection<IClip>;
-  constructor(private db: AngularFirestore, private auth: AngularFireAuth) {
+  constructor(private db: AngularFirestore, private auth: AngularFireAuth,private storage:AngularFireStorage) {
     this.clipCollection = this.db.collection('clips');
   }
   createClip(clip: IClip): Promise<DocumentReference<IClip>> {
@@ -23,6 +26,10 @@ export class ClipService {
   }
   updateClip(title: string, id: string) {
     return this.clipCollection.doc(id).update({ title });
+  }
+  async deletClip(clip: IClip){
+   await this.storage.storage.refFromURL(clip.url).delete()
+   await this.clipCollection.doc(clip.docID).delete()
   }
   getUserClips() {
     //switch map should be also send a observable
