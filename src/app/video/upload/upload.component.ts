@@ -44,7 +44,7 @@ export class UploadComponent implements OnDestroy {
     });
     this.ffmpegService.init();
   }
-  storeFile($event: Event) {
+  async storeFile($event: Event) {
     this.isDragOver = false;
     this.file = ($event as DragEvent).dataTransfer
       ? ($event as DragEvent).dataTransfer?.files.item(0) ?? null
@@ -52,6 +52,8 @@ export class UploadComponent implements OnDestroy {
     if (!this.file || this.file.type !== 'video/mp4') {
       return;
     }
+
+    await this.ffmpegService.getScreenShoots(this.file);
     this.nextStep = true;
   }
 
