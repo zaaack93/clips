@@ -11,6 +11,7 @@ import {
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { last } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { FfmpegService } from 'src/app/services/ffmpeg.service';
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
@@ -35,11 +36,13 @@ export class UploadComponent implements OnDestroy {
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
     private clipService: ClipService,
-    private router: Router
+    private router: Router,
+    public ffmpegService: FfmpegService
   ) {
     auth.user.subscribe((user) => {
       this.user = user;
     });
+    this.ffmpegService.init();
   }
   storeFile($event: Event) {
     this.isDragOver = false;
@@ -78,7 +81,7 @@ export class UploadComponent implements OnDestroy {
             title: _vm.title.value as string,
             fileName: `${filePath.replace('clip/', '')}`,
             url: url,
-            timeStamp:firebase.firestore.FieldValue.serverTimestamp()
+            timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
           };
           const clipDocRef = await _vm.clipService.createClip(clip);
           _vm.showAlert = true;
