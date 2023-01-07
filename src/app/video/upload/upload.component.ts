@@ -32,6 +32,7 @@ export class UploadComponent implements OnDestroy {
   messageAlert: string = 'Please wait! Your clip is being uploaded.';
   user: firebase.User | null = null;
   task!: AngularFireUploadTask;
+  screenShotTask!: AngularFireUploadTask;
   screenShots: string[] = [];
   selectedScreenShot: string = '';
   constructor(
@@ -66,6 +67,14 @@ export class UploadComponent implements OnDestroy {
     this.inSubmission = true;
     const filePath = `clips/${uuidv4()}.mp4`;
     this.task = this.storage.upload(filePath, this.file);
+    //get the blob from url
+    const screenShotBlob = this.ffmpegService.getBlobFromUrl(
+      this.selectedScreenShot
+    );
+    const screenShotPath = `screenShots/${uuidv4()}.png`;
+
+    this.screenShotTask = this.storage.upload(screenShotPath, screenShotBlob);
+
     //ref is an object that points to a specific file
     const clipRef = this.storage.ref(filePath);
     this.task.percentageChanges().subscribe((progress) => {
