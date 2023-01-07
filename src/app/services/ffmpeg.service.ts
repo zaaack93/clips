@@ -20,20 +20,25 @@ export class FfmpegService {
 
   async getScreenShoots(file: File) {
     const data = await fetchFile(file);
+    const seconds = ['01', '05', '10'];
+    const commands: string[] = [];
+    seconds.forEach((screen, i) => {
+      commands.push(
+        //input
+        '-i',
+        file.name,
+        //output options
+        '-ss',
+        `00:00:${screen}`,
+        '-frames:v',
+        '1',
+        '-filter:v',
+        'scale=510:-1',
+        //output
+        `output_0${i + 1}.png`
+      );
+    });
     this.ffmpeg.FS('writeFile', file.name, data);
-    await this.ffmpeg.run(
-      //input
-      '-i',
-      file.name,
-      //output options
-      '-ss',
-      '00:00:01',
-      '-frames:v',
-      '1',
-      '-filter:v',
-      'scale=510:-1',
-      //output
-      'output_01.png'
-    );
+    await this.ffmpeg.run(...commands);
   }
 }
