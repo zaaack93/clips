@@ -9,7 +9,7 @@ import {
   AngularFireUploadTask,
 } from '@angular/fire/compat/storage';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { combineLatest, last } from 'rxjs';
+import { combineLatest, forkJoin, last } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { FfmpegService } from 'src/app/services/ffmpeg.service';
 @Component({
@@ -74,7 +74,7 @@ export class UploadComponent implements OnDestroy {
     const screenShotPath = `screenShots/${uuidv4()}.png`;
 
     this.screenShotTask = this.storage.upload(screenShotPath, screenShotBlob);
-
+    const screenRef = this.storage.ref(screenShotPath);
     //ref is an object that points to a specific file
     const clipRef = this.storage.ref(filePath);
     combineLatest([
@@ -82,24 +82,28 @@ export class UploadComponent implements OnDestroy {
       this.screenShotTask.percentageChanges(),
     ]).subscribe((progress) => {
       const [progressVideo, progressScreenShot] = progress;
-      this.percentage =
-        (progressVideo as number) + (progressScreenShot as number);
+      if (!progressVideo || !progressScreenShot) return;
+      this.percentage = progressVideo + progressScreenShot;
     });
-
-    this.task
-      .snapshotChanges()
+    forkJoin([
+      this.task.snapshotChanges(),
+      this.screenShotTask.snapshotChanges(),
+    ])
       .pipe(
-        last(),
-        switchMap(() => clipRef.getDownloadURL())
+        switchMap(() =>
+          forkJoin([clipRef.getDownloadURL(), screenRef.getDownloadURL()])
+        )
       )
       .subscribe({
-        async next(url) {
+        async next(urls) {
+          const [clipUrl, screenUrl] = urls;
           const clip = {
             uid: _vm.user?.uid as string,
             displayName: _vm.user?.displayName as string,
             title: _vm.title.value as string,
             fileName: `${filePath.replace('clip/', '')}`,
-            url: url,
+            url: clipUrl,
+            screenShotUrl: screenUrl,
             timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
           };
           const clipDocRef = await _vm.clipService.createClip(clip);
