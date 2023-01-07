@@ -33,6 +33,7 @@ export class UploadComponent implements OnDestroy {
   user: firebase.User | null = null;
   task!: AngularFireUploadTask;
   screenShots: string[] = [];
+  selectedScreenShot: string = '';
   constructor(
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
@@ -55,6 +56,7 @@ export class UploadComponent implements OnDestroy {
     }
 
     this.screenShots = await this.ffmpegService.getScreenShoots(this.file);
+    this.selectedScreenShot = this.screenShots[0];
     this.nextStep = true;
   }
 
