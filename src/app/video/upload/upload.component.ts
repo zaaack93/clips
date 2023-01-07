@@ -9,7 +9,7 @@ import {
   AngularFireUploadTask,
 } from '@angular/fire/compat/storage';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { last } from 'rxjs';
+import { combineLatest, last } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { FfmpegService } from 'src/app/services/ffmpeg.service';
 @Component({
@@ -77,8 +77,13 @@ export class UploadComponent implements OnDestroy {
 
     //ref is an object that points to a specific file
     const clipRef = this.storage.ref(filePath);
-    this.task.percentageChanges().subscribe((progress) => {
-      this.percentage = progress as number;
+    combineLatest([
+      this.task.percentageChanges(),
+      this.screenShotTask.percentageChanges(),
+    ]).subscribe((progress) => {
+      const [progressVideo, progressScreenShot] = progress;
+      this.percentage =
+        (progressVideo as number) + (progressScreenShot as number);
     });
 
     this.task
