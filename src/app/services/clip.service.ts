@@ -8,7 +8,7 @@ import {
   QuerySnapshot,
 } from '@angular/fire/compat/firestore';
 import IClip from '../models/clip.model';
-import { tap, of, BehaviorSubject, combineLatest } from 'rxjs';
+import { tap, of, BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
@@ -30,7 +30,9 @@ export class ClipService {
     return this.clipCollection.doc(id).update({ title });
   }
   async deletClip(clip: IClip) {
-    await this.storage.storage.refFromURL(clip.url).delete();
+    if (clip.url) await this.storage.storage.refFromURL(clip.url).delete();
+    if (clip.screenShotUrl)
+      await this.storage.storage.refFromURL(clip.screenShotUrl).delete();
     await this.clipCollection.doc(clip.docID).delete();
   }
   getUserClips(sort$: BehaviorSubject<string>) {
