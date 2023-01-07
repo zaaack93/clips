@@ -22,6 +22,7 @@ export class FfmpegService {
     const data = await fetchFile(file);
     const seconds = ['01', '05', '10'];
     const commands: string[] = [];
+    // get three screenshot from the video
     seconds.forEach((screen, i) => {
       commands.push(
         //input
@@ -40,5 +41,16 @@ export class FfmpegService {
     });
     this.ffmpeg.FS('writeFile', file.name, data);
     await this.ffmpeg.run(...commands);
+    //get url of three screens
+    const screenShots: string[] = [];
+    [1, 2, 3].forEach((item) => {
+      const screenShotFile = this.ffmpeg.FS('readFile', `output_0${item}.png`);
+      const screenShotBlob = new Blob([screenShotFile.buffer], {
+        type: 'image/png',
+      });
+      const screenShotUrl = URL.createObjectURL(screenShotBlob);
+      screenShots.push(screenShotUrl);
+    });
+    return screenShots;
   }
 }
