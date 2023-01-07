@@ -32,6 +32,7 @@ export class UploadComponent implements OnDestroy {
   messageAlert: string = 'Please wait! Your clip is being uploaded.';
   user: firebase.User | null = null;
   task!: AngularFireUploadTask;
+  screenShots: string[] = [];
   constructor(
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
@@ -53,7 +54,7 @@ export class UploadComponent implements OnDestroy {
       return;
     }
 
-    await this.ffmpegService.getScreenShoots(this.file);
+    this.screenShots = await this.ffmpegService.getScreenShoots(this.file);
     this.nextStep = true;
   }
 
