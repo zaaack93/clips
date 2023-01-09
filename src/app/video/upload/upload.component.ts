@@ -1,5 +1,5 @@
 import { ClipService } from './../../services/clip.service';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Component, OnDestroy } from '@angular/core';
@@ -92,12 +92,9 @@ export class UploadComponent implements OnDestroy {
       .pipe(
         switchMap(() =>
           forkJoin([clipRef.getDownloadURL(), screenRef.getDownloadURL()])
-        )
-      )
-      .subscribe({
-        async next(urls) {
-          const [clipUrl, screenUrl] = urls;
-          const clip = {
+        ),
+        map(([clipUrl, screenUrl])=>(
+            {
             uid: _vm.user?.uid as string,
             displayName: _vm.user?.displayName as string,
             title: _vm.title.value as string,
@@ -106,7 +103,12 @@ export class UploadComponent implements OnDestroy {
             screenShotUrl: screenUrl,
             screenName: `${screenShotPath.replace('clip/', '')}`,
             timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-          };
+            }
+          ))
+      )
+      .subscribe({
+        async next(clip) {
+
           const clipDocRef = await _vm.clipService.createClip(clip);
           _vm.showAlert = true;
           _vm.colorAlert = 'green';
