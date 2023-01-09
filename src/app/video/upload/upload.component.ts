@@ -68,12 +68,14 @@ export class UploadComponent implements OnDestroy {
     const filePath = `clips/${uuidv4()}.mp4`;
     this.task = this.storage.upload(filePath, this.file);
     //get the blob from url
-    const screenShotBlob = this.ffmpegService.getBlobFromUrl(
+    const screenShotBlob = await this.ffmpegService.getBlobFromUrl(
       this.selectedScreenShot
     );
     const screenShotPath = `screenShots/${uuidv4()}.png`;
 
-    this.screenShotTask = this.storage.upload(screenShotPath, screenShotBlob);
+    this.screenShotTask = this.storage.upload(screenShotPath, screenShotBlob, {
+      contentType: 'image/png',
+    });
     const screenRef = this.storage.ref(screenShotPath);
     //ref is an object that points to a specific file
     const clipRef = this.storage.ref(filePath);
@@ -81,6 +83,7 @@ export class UploadComponent implements OnDestroy {
       this.task.percentageChanges(),
       this.screenShotTask.percentageChanges(),
     ]).subscribe((progress) => {
+      console.log(progress);
       const [progressVideo, progressScreenShot] = progress;
       if (!progressVideo || !progressScreenShot) return;
       this.percentage = progressVideo + progressScreenShot;
@@ -93,22 +96,19 @@ export class UploadComponent implements OnDestroy {
         switchMap(() =>
           forkJoin([clipRef.getDownloadURL(), screenRef.getDownloadURL()])
         ),
-        map(([clipUrl, screenUrl])=>(
-            {
-            uid: _vm.user?.uid as string,
-            displayName: _vm.user?.displayName as string,
-            title: _vm.title.value as string,
-            fileName: `${filePath.replace('screenShots/', '')}`,
-            url: clipUrl,
-            screenShotUrl: screenUrl,
-            screenName: `${screenShotPath.replace('clip/', '')}`,
-            timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-            }
-          ))
+        map(([clipUrl, screenUrl]) => ({
+          uid: _vm.user?.uid as string,
+          displayName: _vm.user?.displayName as string,
+          title: _vm.title.value as string,
+          fileName: `${filePath.replace('screenShots/', '')}`,
+          url: clipUrl,
+          screenShotUrl: screenUrl,
+          screenName: `${screenShotPath.replace('clip/', '')}`,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+        }))
       )
       .subscribe({
         async next(clip) {
-
           const clipDocRef = await _vm.clipService.createClip(clip);
           _vm.showAlert = true;
           _vm.colorAlert = 'green';

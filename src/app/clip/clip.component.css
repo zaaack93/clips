@@ -1,7 +1,8 @@
+/*
 @import '~video.js/dist/video-js.css';
 @import '~@videojs/themes/dist/forest/index.css';
 
-/* Video.js CSS START */
+Video.js CSS
 .vjs-theme-forest {
   --vjs-theme-forest--primary: rgb(129,140,248);
 }
