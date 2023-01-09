@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ClipService } from 'src/app/services/clip.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
@@ -5,6 +6,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   selector: 'app-clips-list',
   templateUrl: './clips-list.component.html',
   styleUrls: ['./clips-list.component.css'],
+  providers: [DatePipe],
 })
 export class ClipsListComponent implements OnInit, OnDestroy {
 
@@ -25,7 +27,7 @@ export class ClipsListComponent implements OnInit, OnDestroy {
       innerHeight + Math.round(scrollTop) === offsetHeight;
 
     if (bottomOfWindow) {
-      this.clipService.getClipsList();
+      this.clipService?.getClipsList();
     }
   }
 }
