@@ -12,7 +12,8 @@
 }
 
 .video-js {
-  position: initial;
+  position: relative;
+  max-width: 100%;
 }
 
 .video-js .vjs-control-bar {
