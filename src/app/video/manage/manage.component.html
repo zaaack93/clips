@@ -18,8 +18,8 @@
       <div class="mt-6 rounded-tl-2xl rounded-br-2xl shadow-xl bg-secondary flex flex-col justify-start" *ngFor="let clip of listClips">
 
         <!-- Image -->
-        <a href="#">
-          <img class="card-img-top rounded-tl-2xl w-full" src="assets/img/1.jpg">
+        <a routerLink="/clip/{{clip.docID}}">
+          <img class="card-img-top rounded-tl-2xl w-full" [src]="clip.screenShotUrl" crossorigin>
         </a>
 
         <!-- Body -->
