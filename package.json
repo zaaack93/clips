@@ -24,6 +24,7 @@
     "@types/node": "^18.11.18",
     "@types/uuid": "^9.0.0",
     "@videojs/themes": "^1.0.1",
+    "ngx-clipboard": "^15.1.0",
     "ngx-mask": "^14.2.4",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

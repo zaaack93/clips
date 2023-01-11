@@ -8,21 +8,22 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { EditVideoComponent } from './edit-video/edit-video.component';
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
-
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
   declarations: [
     ManageComponent,
     UploadComponent,
     EditVideoComponent,
-    SafeUrlPipe
+    SafeUrlPipe,
   ],
   imports: [
+    ClipboardModule,
     CommonModule,
     VideoRoutingModule,
     FormsModule,
     SharedModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class VideoModule { }
+export class VideoModule {}
