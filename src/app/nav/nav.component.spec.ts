@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
+import { By } from '@angular/platform-browser';
 
 describe('NavComponent', () => {
   let component: NavComponent;
@@ -29,5 +30,9 @@ describe('NavComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('should have the logout link', () => {
+    const lougoutLink = fixture.debugElement.query(By.css('li:nth-child(3) a'));
+    expect(lougoutLink).withContext('not logged in').toBeTruthy();
   });
 });
