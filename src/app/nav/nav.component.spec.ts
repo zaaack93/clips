@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-
+import { AuthService } from '../services/auth.service';
+import { RouterTestingModule } from '@angular/router/testing';
 import { NavComponent } from './nav.component';
 
 describe('NavComponent', () => {
@@ -17,6 +18,8 @@ describe('NavComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NavComponent],
+      imports: [RouterTestingModule],
+      providers: [{ provide: AuthService, useValue: mockAuthService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavComponent);
